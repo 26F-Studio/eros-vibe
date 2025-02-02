@@ -79,12 +79,19 @@ export default defineConfig((ctx) => {
       // env: {},
       // rawDefine: {}
       // ignorePublicFolder: true,
-      // minify: false,
+      minify: !process.env.TAURI_ENV_DEBUG ? 'esbuild' : false,
       // polyfillModulePreload: true,
       // distDir
 
       extendViteConf(viteConf) {
         viteConf.base = process.env.DEPLOY_GITHUB_PAGE ? '/eros-vibe/' : '/'
+        if (process.env.TAURI_ENV_DEBUG) {
+          if (viteConf.build) {
+            viteConf.build.sourcemap = true
+          }
+          viteConf.clearScreen = false
+          viteConf.envPrefix = ['VITE_', 'TAURI_ENV_*']
+        }
       },
       // viteVuePluginOptions: {},
 
@@ -105,7 +112,6 @@ export default defineConfig((ctx) => {
             include: [fileURLToPath(new URL('./src/i18n', import.meta.url))],
           },
         ],
-
         [
           'vite-plugin-checker',
           {
@@ -123,7 +129,8 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
-      open: true, // opens a browser window automatically
+      open: !process.env.TAURI_ENV_DEBUG,
+      strictPort: true,
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

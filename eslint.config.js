@@ -15,7 +15,7 @@ export default [
      *
      * ESLint requires "ignores" key to be the only one in this object
      */
-    // ignores: []
+    ignores: ['src-tauri/target/*']
   },
 
   ...pluginQuasar.configs.recommended(),
@@ -43,14 +43,14 @@ export default [
   },
   // https://github.com/vuejs/eslint-config-typescript
   ...vueTsEslintConfig({
-    // Optional: extend additional configurations from typescript-eslint'.
+    // Optional: extend additional configurations from 'typescript-eslint'.
     // Supports all the configurations in
     // https://typescript-eslint.io/users/configs#recommended-configurations
     extends: [
       // By default, only the 'recommendedTypeChecked' rules are enabled.
       'recommendedTypeChecked',
       // You can also manually enable the stylistic rules.
-      // "stylistic",
+      // "Stylistic",
 
       // Other utility configurations, such as 'eslintRecommended', (note that it's in camelCase)
       // are also extendable here. But we don't recommend using them directly.
