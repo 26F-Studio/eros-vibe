@@ -2,8 +2,12 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers'
+import * as glob from 'glob'
 import { fileURLToPath } from 'node:url'
+import { readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
+// noinspection JSUnusedGlobalSymbols
 export default defineConfig((ctx) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -12,7 +16,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'axios'],
+    boot: ['axios', 'bus', 'i18n'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -20,7 +24,7 @@ export default defineConfig((ctx) => {
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v7',
+      'mdi-v7',
       // 'fontawesome-v6',
       // 'eva-icons',
       // 'themify',
@@ -33,6 +37,25 @@ export default defineConfig((ctx) => {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
+      // Adapt the build process to deploy to GitHub Pages
+      afterBuild(params) {
+        const distDir = params.quasarConf.build?.distDir
+        if (distDir && process.env.DEPLOY_GITHUB_PAGE) {
+          const indexHtml = readFileSync(resolve(distDir, 'index.html')).toString()
+          const newHtml = indexHtml.replace('href="/manifest.json"', 'href="manifest.json"')
+          writeFileSync(resolve(distDir, 'index.html'), newHtml)
+
+          const paths = glob.sync(resolve(distDir, '**/*.js').replace(/\\/g, '/'))
+          paths.forEach((path) => {
+            const content = readFileSync(path).toString()
+            if (content.includes('/sw.js')) {
+              const newContent = content.replace('/sw.js', 'sw.js')
+              writeFileSync(path, newContent)
+            }
+          })
+        }
+      },
+
       target: {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',
@@ -60,7 +83,9 @@ export default defineConfig((ctx) => {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf(viteConf) {
+        viteConf.base = process.env.DEPLOY_GITHUB_PAGE ? '/eros-vibe/' : '/'
+      },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
@@ -76,7 +101,7 @@ export default defineConfig((ctx) => {
 
             ssr: ctx.modeName === 'ssr',
 
-            // you need to set i18n resource including paths !
+            // you need to set i18n resource including paths!
             include: [fileURLToPath(new URL('./src/i18n', import.meta.url))],
           },
         ],
@@ -98,17 +123,17 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
-      open: true, // opens browser window automatically
+      open: true, // opens a browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
-      config: {},
+      config: { dark: 'auto' },
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
-      // For special cases outside of where the auto-import strategy can have an impact
+      // For special cases outside where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
       // you can manually specify Quasar components/directives to be available everywhere:
       //
@@ -116,7 +141,7 @@ export default defineConfig((ctx) => {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['Dialog', 'Notify'],
     },
 
     // animations: 'all', // --- includes all animations
@@ -142,7 +167,7 @@ export default defineConfig((ctx) => {
       // (gets superseded if process.env.PORT is specified at runtime)
 
       middlewares: [
-        'render', // keep this as last one
+        'render', // keep this as the last one
       ],
 
       // extendPackageJson (json) {},
@@ -227,7 +252,7 @@ export default defineConfig((ctx) => {
        *
        * Each entry in the list should be a relative filename to /src-bex/
        *
-       * @example [ 'my-script.ts', 'sub-folder/my-other-script.js' ]
+       * @example [ 'my-script.ts', 'subfolder/my-other-script.js' ]
        */
       extraScripts: [],
     },

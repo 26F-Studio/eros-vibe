@@ -2,7 +2,7 @@ export default {
   components: {
     ThemeButton: {
       labels: {
-        switchTheme: 'Switch Theme',
+        switchTheme: '切换主题',
       },
     },
   },
@@ -10,15 +10,15 @@ export default {
     drawers: {
       LeftMainDrawer: {
         labels: {
-          dashboard: 'Dashboard',
-          vibrate: 'Vibrate',
+          dashboard: '仪表盘',
+          vibrate: '震动',
         },
       },
     },
     headers: {
       MainHeader: {
         labels: {
-          title: 'Eros Vibe',
+          title: '爱悦控',
         },
       },
     },
@@ -26,8 +26,8 @@ export default {
   pages: {
     DashboardPage: {
       labels: {
-        title: 'Eros Vibe',
-        intro: 'A sex toy manager powered by Quasar',
+        title: '爱悦控',
+        intro: '基于Quasar的情趣用品管理系统',
       },
     },
   },
