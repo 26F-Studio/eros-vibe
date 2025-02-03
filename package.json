@@ -11,7 +11,9 @@
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
     "dev-spa": "quasar dev",
-    "dev-tauri": "tauri dev",
+    "dev-desktop": "tauri dev",
+    "dev-android": "tauri android dev",
+    "dev-ios": "tauri ios dev",
     "build-spa": "quasar build",
     "postinstall": "quasar prepare"
   },
