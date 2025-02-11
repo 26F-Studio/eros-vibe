@@ -13,6 +13,10 @@ const logoUrl = computed(
     new URL(`/src/assets/logos/${dark.isActive ? 'light' : 'dark'}/colorful.svg`, import.meta.url)
       .href,
 )
+
+const testBluetooth = () => {
+  console.log('Test Bluetooth')
+}
 </script>
 
 <template>
@@ -23,6 +27,12 @@ const logoUrl = computed(
     </div>
     <div class="text-h5 text-grey">
       {{ i18n('labels.intro') }}
+    </div>
+    <div>
+      <q-btn label="Test Bluetooth" @click="testBluetooth"/>
+    </div>
+    <div>
+      <q-btn/>
     </div>
   </q-page>
 </template>
