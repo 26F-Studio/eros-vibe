@@ -19,7 +19,7 @@ const testBluetooth = async () => {
   const bluetoothHelper = new BluetoothHelper()
   try {
     await bluetoothHelper.scan([
-      '00005343-0000-1000-8000-00805f9b34fb',
+      '00005343-0000-1000-8000-00805f9b34fc',
       '00002233-0000-1000-8000-00805f9b34fb',
     ])
   } catch (e) {

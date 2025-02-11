@@ -1,5 +1,4 @@
-import type { BleDevice } from '@mnlphlp/plugin-blec'
-import { startScan } from '@mnlphlp/plugin-blec'
+import { startScan, stopScan } from '@mnlphlp/plugin-blec'
 
 declare global {
   interface Window {
@@ -10,19 +9,23 @@ declare global {
 export class BluetoothHelper {
   async scan(filterServices: string[]): Promise<void> {
     if (window.isTauri) {
-      try {
-        const devices = (
-          await new Promise<BleDevice[]>((resolve, reject) => {
-            startScan((devices) => resolve(devices), 5000).catch((e) => reject(<Error>e))
-          })
-        ).filter((device) => filterServices.every((service) => device.services.includes(service)))
-        console.log(devices)
-      } catch (e) {
-        console.error(e)
-      }
+      await startScan((devices) => {
+        const filtered = devices.filter((device) =>
+          filterServices.every((service) => device.services.includes(service)),
+        )
+        console.log(filtered)
+        if (filtered.length) {
+          stopScan().catch((e) => console.warn(e))
+        }
+      }, 5000)
     } else {
       await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
+        filters: [
+          {
+            services: filterServices,
+          },
+        ],
+        optionalServices: filterServices,
       })
     }
   }

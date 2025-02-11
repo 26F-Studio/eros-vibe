@@ -131,6 +131,7 @@ export default defineConfig((ctx) => {
     devServer: {
       // https: true,
       open: !process.env.TAURI_ENV_DEBUG,
+      port: 9000,
       strictPort: true,
     },
 
