@@ -2,6 +2,7 @@
 import { useQuasar } from 'quasar'
 import { computed } from 'vue'
 
+import { BluetoothHelper } from 'src/types/BluetoothHelper'
 import { i18nSubPath } from 'src/utils/common'
 
 const { dark } = useQuasar()
@@ -14,8 +15,16 @@ const logoUrl = computed(
       .href,
 )
 
-const testBluetooth = () => {
-  console.log('Test Bluetooth')
+const testBluetooth = async () => {
+  const bluetoothHelper = new BluetoothHelper()
+  try {
+    await bluetoothHelper.scan([
+      '00005343-0000-1000-8000-00805f9b34fb',
+      '00002233-0000-1000-8000-00805f9b34fb',
+    ])
+  } catch (e) {
+    console.log(e)
+  }
 }
 </script>
 
@@ -29,10 +38,7 @@ const testBluetooth = () => {
       {{ i18n('labels.intro') }}
     </div>
     <div>
-      <q-btn label="Test Bluetooth" @click="testBluetooth"/>
-    </div>
-    <div>
-      <q-btn/>
+      <q-btn color="primary" label="Test Bluetooth" no-caps @click="testBluetooth" />
     </div>
   </q-page>
 </template>
