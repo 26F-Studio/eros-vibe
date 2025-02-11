@@ -2,10 +2,9 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers'
-import * as glob from 'glob'
 import { fileURLToPath } from 'node:url'
-import { readFileSync, writeFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { extname,resolve } from 'node:path'
 
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig((ctx) => {
@@ -45,12 +44,14 @@ export default defineConfig((ctx) => {
           const newHtml = indexHtml.replace('href="/manifest.json"', 'href="manifest.json"')
           writeFileSync(resolve(distDir, 'index.html'), newHtml)
 
-          const paths = glob.sync(resolve(distDir, '**/*.js').replace(/\\/g, '/'))
-          paths.forEach((path) => {
-            const content = readFileSync(path).toString()
-            if (content.includes('/sw.js')) {
-              const newContent = content.replace('/sw.js', 'sw.js')
-              writeFileSync(path, newContent)
+          readdirSync(resolve(distDir, 'assets')).forEach((filename) => {
+            console.log(filename)
+            if (extname(filename) === '.js') {
+              const content = readFileSync(filename).toString()
+              if (content.includes('/sw.js')) {
+                const newContent = content.replace('/sw.js', 'sw.js')
+                writeFileSync(filename, newContent)
+              }
             }
           })
         }
