@@ -1,8 +1,8 @@
 <script lang="ts" setup>
+import { requestDevice } from 'tauri-plugin-bluetooth-api'
 import { useQuasar } from 'quasar'
 import { computed } from 'vue'
 
-import { BluetoothHelper } from 'src/types/BluetoothHelper'
 import { i18nSubPath } from 'src/utils/common'
 
 const { dark } = useQuasar()
@@ -16,12 +16,11 @@ const logoUrl = computed(
 )
 
 const testBluetooth = async () => {
-  const bluetoothHelper = new BluetoothHelper()
   try {
-    await bluetoothHelper.scan([
-      '00005343-0000-1000-8000-00805f9b34fc',
-      '00002233-0000-1000-8000-00805f9b34fb',
-    ])
+    await requestDevice({
+      filters: [{ services: [0x5343, 0x2233] }],
+      optionalServices: ['55535343-fe7d-4ae5-8fa9-9fafd205e455'],
+    })
   } catch (e) {
     console.log(e)
   }
